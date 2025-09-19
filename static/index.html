@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛍️ Meesho Micro-Moment Prediction Engine</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header__content">
+                    <h1 class="header__title">🛍️ Meesho Micro-Moment Engine</h1>
+                    <p class="header__subtitle">AI-Powered WhatsApp Commerce Optimization for Indian Markets</p>
+                    <div class="header__status">
+                        <div class="status-badge" id="dataStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">Data: Not Generated</span>
+                        </div>
+                        <div class="status-badge" id="modelStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">Models: Not Trained</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <div class="workflow">
+                    <!-- Step 1: Data Generation -->
+                    <div class="workflow__step">
+                        <div class="step-card" id="dataCard">
+                            <div class="step-card__header">
+                                <div class="step-number">1</div>
+                                <div class="step-info">
+                                    <h3 class="step-title">Generate Synthetic Data</h3>
+                                    <p class="step-description">Create GA4/GSC-style datasets for model training</p>
+                                </div>
+                            </div>
+                            <div class="step-card__content">
+                                <div class="form-group">
+                                    <label for="nUsers">Number of Users</label>
+                                    <input type="number" id="nUsers" class="form-input" value="8000" min="1000"
+                                        max="50000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="nProducts">Number of Products</label>
+                                    <input type="number" id="nProducts" class="form-input" value="3000" min="100"
+                                        max="10000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="days">Number of Days</label>
+                                    <input type="number" id="days" class="form-input" value="120" min="30" max="365">
+                                </div>
+                                <button id="generateDataBtn" class="btn btn--primary">
+                                    <span class="btn-text">Generate Synthetic Data</span>
+                                    <span class="btn-loader hidden">
+                                        <span class="spinner"></span>
+                                        Generating...
+                                    </span>
+                                </button>
+
+                                <div id="dataResults" class="results-card hidden">
+                                    <div class="results-card__header">
+                                        📊 Data Generation Results
+                                    </div>
+                                    <div class="results-card__content">
+                                        <div class="results-grid">
+                                            <div class="result-item">
+                                                <span class="result-value" id="filesCount">-</span>
+                                                <span class="result-label">Files Created</span>
+                                            </div>
+                                            <div class="result-item">
+                                                <span class="result-value" id="usersCount">-</span>
+                                                <span class="result-label">Users</span>
+                                            </div>
+                                            <div class="result-item">
+                                                <span class="result-value" id="productsCount">-</span>
+                                                <span class="result-label">Products</span>
+                                            </div>
+                                            <div class="result-item">
+                                                <span class="result-value" id="interactionsCount">-</span>
+                                                <span class="result-label">Interactions</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Train Models -->
+                    <div class="workflow__step">
+                        <div class="step-card step-card--disabled" id="trainingCard">
+                            <div class="step-card__header">
+                                <div class="step-number">2</div>
+                                <div class="step-info">
+                                    <h3 class="step-title">Train ML Models</h3>
+                                    <p class="step-description">Build co-visitation, send-time optimization, and
+                                        re-ranking models</p>
+                                </div>
+                            </div>
+                            <div class="step-card__content">
+                                <button id="trainModelsBtn" class="btn btn--primary" disabled>
+                                    <span class="btn-text">Train All Models</span>
+                                    <span class="btn-loader hidden">
+                                        <span class="spinner"></span>
+                                        Training...
+                                    </span>
+                                </button>
+
+                                <div id="trainingProgress" class="progress-container hidden">
+                                    <div id="progressText" class="progress-text">Initializing training...</div>
+                                    <div class="progress-bar">
+                                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Generate Recommendations -->
+                    <div class="workflow__step">
+                        <div class="step-card step-card--disabled" id="recommendationsCard">
+                            <div class="step-card__header">
+                                <div class="step-number">3</div>
+                                <div class="step-info">
+                                    <h3 class="step-title">Generate Recommendations</h3>
+                                    <p class="step-description">Select persona and get optimized WhatsApp marketing
+                                        content</p>
+                                </div>
+                            </div>
+                            <div class="step-card__content">
+                                <div class="form-group">
+                                    <label for="personaSelect">Select Target Persona</label>
+                                    <select id="personaSelect" class="form-select" disabled>
+                                        <option value="">Choose a persona...</option>
+                                    </select>
+                                </div>
+                                <button id="generateRecommendationsBtn" class="btn btn--primary" disabled>
+                                    <span class="btn-text">Generate Recommendations</span>
+                                    <span class="btn-loader hidden">
+                                        <span class="spinner"></span>
+                                        Generating...
+                                    </span>
+                                </button>
+
+                                <div id="recommendationsResults" class="recommendations-container hidden">
+                                    <div class="recommendations-header">
+                                        <h3>📊 Campaign Insights</h3>
+                                        <div id="campaignHeadline" class="campaign-headline"></div>
+                                        <p>🎯 Optimal Send Times (IST):</p>
+                                        <div id="optimalHours" class="optimal-hours"></div>
+                                    </div>
+
+                                    <div class="products-section">
+                                        <h4 class="products-title">🛍️ Recommended Products</h4>
+                                        <div id="productsGrid" class="products-grid"></div>
+                                    </div>
+
+                                    <div class="whatsapp-section">
+                                        <h4 class="whatsapp-title">💬 WhatsApp Message Preview</h4>
+                                        <div id="whatsappMessage" class="whatsapp-preview"></div>
+                                        <button id="copyMessageBtn" class="copy-button">
+                                            📋 Copy Message
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

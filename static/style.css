@@ -1,0 +1,612 @@
+:root {
+  /* Meesho Brand Colors */
+  --meesho-purple: #7B2F9F;
+  --meesho-purple-dark: #5D1F7A;
+  --meesho-purple-light: #9A4FC4;
+  --meesho-orange: #FF6B35;
+  --meesho-orange-dark: #E54A1F;
+  --meesho-orange-light: #FF8B5A;
+  --meesho-pink: #E91E63;
+  --meesho-white: #FFFFFF;
+  --meesho-cream: #FDF7F4;
+  --meesho-gray-50: #F8F4F9;
+  --meesho-gray-100: #F0EBF2;
+  --meesho-gray-200: #E0D5E4;
+  --meesho-gray-700: #4A3B52;
+  --meesho-gray-800: #2D1F35;
+  --meesho-success: #10B981;
+  --meesho-warning: #F59E0B;
+  --meesho-error: #EF4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, var(--meesho-cream) 0%, var(--meesho-gray-50) 100%);
+  color: var(--meesho-gray-800);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Header with Purple-Orange Gradient */
+.header {
+  background: linear-gradient(135deg, var(--meesho-purple) 0%, var(--meesho-orange) 100%);
+  color: var(--meesho-white);
+  padding: 3rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.header__title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+  font-weight: 400;
+}
+
+.header__status {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-weight: 600;
+  color: var(--meesho-white);
+  transition: all 0.3s ease;
+}
+
+.status-badge--success {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: var(--meesho-success);
+}
+
+.status-badge--warning {
+  background: rgba(245, 158, 11, 0.9);
+  border-color: var(--meesho-warning);
+}
+
+/* Main Content */
+.main {
+  padding: 4rem 0;
+}
+
+.workflow {
+  display: grid;
+  gap: 2.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Step Cards with Purple Theme */
+.step-card {
+  background: var(--meesho-white);
+  border-radius: 16px;
+  border: 2px solid var(--meesho-gray-200);
+  box-shadow: 0 10px 25px rgba(123, 47, 159, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(123, 47, 159, 0.15);
+  border-color: var(--meesho-purple-light);
+}
+
+.step-card--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.step-card__header {
+  background: linear-gradient(135deg, var(--meesho-purple) 0%, var(--meesho-purple-dark) 100%);
+  color: var(--meesho-white);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.step-number {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.step-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.step-description {
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.step-card__content {
+  padding: 2rem;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--meesho-purple-dark);
+  font-size: 1rem;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--meesho-gray-200);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: var(--meesho-white);
+  transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--meesho-purple);
+  box-shadow: 0 0 0 4px rgba(123, 47, 159, 0.1);
+}
+
+/* Buttons with Orange Gradient */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--meesho-orange) 0%, var(--meesho-orange-dark) 100%);
+  color: var(--meesho-white);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+}
+
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+}
+
+.btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--secondary {
+  background: var(--meesho-white);
+  color: var(--meesho-purple);
+  border: 2px solid var(--meesho-purple);
+}
+
+.btn--secondary:hover {
+  background: var(--meesho-purple);
+  color: var(--meesho-white);
+}
+
+/* Loading States */
+.spinner {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--meesho-white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Results Cards with Purple Accent */
+.results-card {
+  background: var(--meesho-white);
+  border-radius: 12px;
+  border: 2px solid var(--meesho-purple-light);
+  margin-top: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(123, 47, 159, 0.1);
+}
+
+.results-card__header {
+  background: linear-gradient(135deg, var(--meesho-purple-light) 0%, var(--meesho-purple) 100%);
+  color: var(--meesho-white);
+  padding: 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.results-card__content {
+  padding: 1.5rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.result-item {
+  text-align: center;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--meesho-gray-50) 0%, var(--meesho-cream) 100%);
+  border-radius: 12px;
+  border: 2px solid var(--meesho-gray-200);
+}
+
+.result-value {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--meesho-orange);
+  margin-bottom: 0.5rem;
+}
+
+.result-label {
+  font-size: 0.9rem;
+  color: var(--meesho-gray-700);
+  font-weight: 600;
+}
+
+/* Progress Bar with Purple Gradient */
+.progress-container {
+  background: var(--meesho-white);
+  border-radius: 12px;
+  border: 2px solid var(--meesho-purple-light);
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(123, 47, 159, 0.1);
+}
+
+.progress-text {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--meesho-purple-dark);
+  font-size: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 1rem;
+  background: var(--meesho-gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--meesho-purple) 0%, var(--meesho-orange) 100%);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+/* Recommendations with Orange Header */
+.recommendations-container {
+  background: var(--meesho-white);
+  border-radius: 16px;
+  border: 2px solid var(--meesho-orange-light);
+  margin-top: 2rem;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(255, 107, 53, 0.15);
+}
+
+.recommendations-header {
+  background: linear-gradient(135deg, var(--meesho-orange) 0%, var(--meesho-orange-dark) 100%);
+  color: var(--meesho-white);
+  padding: 2rem;
+  text-align: center;
+}
+
+.campaign-headline {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.optimal-hours {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.hour-chip {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--meesho-white);
+  padding: 0.75rem 1.25rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.products-section {
+  padding: 2rem;
+}
+
+.products-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--meesho-purple-dark);
+  margin-bottom: 1.5rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+
+.product-card {
+  background: linear-gradient(135deg, var(--meesho-gray-50) 0%, var(--meesho-cream) 100%);
+  border: 2px solid var(--meesho-gray-200);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(123, 47, 159, 0.15);
+  border-color: var(--meesho-purple-light);
+}
+
+.product-image {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.product-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--meesho-gray-800);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--meesho-orange);
+}
+
+/* WhatsApp Section with Purple Background */
+.whatsapp-section {
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--meesho-purple-light) 0%, var(--meesho-purple) 100%);
+  color: var(--meesho-white);
+}
+
+.whatsapp-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.whatsapp-preview {
+  background: #dcf8c6;
+  color: #1f2937;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  border: 2px solid #b3e6a3;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.copy-button {
+  background: #25d366;
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.copy-button:hover {
+  background: #1ea952;
+  transform: translateY(-2px);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.toast {
+  background: var(--meesho-white);
+  border: 2px solid var(--meesho-gray-200);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  max-width: 400px;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast--success {
+  border-left: 4px solid var(--meesho-success);
+  background: #f0fdf4;
+}
+
+.toast--error {
+  border-left: 4px solid var(--meesho-error);
+  background: #fef2f2;
+}
+
+.toast--warning {
+  border-left: 4px solid var(--meesho-warning);
+  background: #fffbeb;
+}
+
+/* NEW: Workflow Enforcement Styles */
+.step-card--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    position: relative;
+}
+
+.step-card--disabled::before {
+    content: '🔒 Complete previous steps first';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(123, 47, 159, 0.9);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    font-size: 0.9rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.step-card--disabled .step-card__content {
+    filter: blur(2px);
+}
+
+.btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: #9d9dac !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.form-select:disabled {
+    background: #f4f4f7 !important;
+    color: #9d9dac !important;
+    cursor: not-allowed !important;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header__title {
+    font-size: 2.2rem;
+  }
+  
+  .step-card__header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .optimal-hours {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .header__title {
+    font-size: 1.8rem;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
