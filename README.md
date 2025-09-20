@@ -1,14 +1,43 @@
-**Meesho Micro-Moment Prediction Engine**
+# Meesho Micro-Moment Prediction Engine
 
-**Overview**
+# Installation & Setup:
 
-**Built for the DICE Challenge Season 2**
+**Clone Repository:-**
+
+1) git clone https://github.com/aryan0xo76/meesho-micro-moments-predictor
+
+2) cd meesho-micro-moments-predictor
+
+**Create virtual environment:-**
+
+python -m venv venv
+
+**Activate virtual environment:-**
+
+**a) On Windows:**
+
+venv\Scripts\activate
+
+**b) On macOS/Linux:**
+
+source venv/bin/activate
+
+**Install Dependencies:-**
+
+pip install -r requirements.txt
+
+**Run the Web Application Locally:-**
+
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+
+**The application will be available at: http://localhost:8000**
+
+# Built for the DICE Challenge Season 2
 
 An AI-powered WhatsApp marketing optimization platform that transforms basic seller inputs into personalized, high-converting WhatsApp campaigns.
-
 This solution addresses the critical gap in WhatsApp marketing effectiveness for small sellers in India's social commerce ecosystem.
 
-**What It Does**
+# What It Does
 
 Input: Basic seller parameters (target users, product catalog, campaign duration)
 
