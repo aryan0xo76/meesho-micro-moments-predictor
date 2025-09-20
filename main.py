@@ -53,25 +53,41 @@ models = {
     "headlines": None
 }
 
+# Initialize models with default instances
+def initialize_models():
+    """Initialize models with default instances"""
+    global models
+    if models["headlines"] is None:
+        models["headlines"] = HeadlineGenerator()
+    if models["covisitation"] is None:
+        models["covisitation"] = CovisitationModel()
+    if models["sto"] is None:
+        models["sto"] = SendTimeOptimizer()
+    if models["reranker"] is None:
+        models["reranker"] = CatBoostReranker()
+
+# Initialize models on startup
+initialize_models()
+
 # Training status
 training_status = {"status": "idle", "progress": 0, "message": ""}
 
-# Personas configuration
+# Personas configuration - UPDATED with correct categories
 PERSONAS = [
     {
         "id": "tier2_fashion",
         "name": "Tier-2 Fashion Family Shopper",
         "description": "Women's ethnic wear focus, evening engagement peak, Diwali/wedding season boost",
-        "preferred_categories": ["fashion_ethnic", "jewelry", "accessories", "kurta", "saree"],
+        "preferred_categories": ["fashion", "ethnic", "jewelry", "accessories"],
         "peak_hours": [20, 21, 22],
         "region_focus": "tier2_cities",
         "seasonal_boost": ["Diwali", "Wedding Season", "Navratri"]
     },
     {
         "id": "student_examprep",
-        "name": "Campus Student Exam-Prep",
+        "name": "Campus Student Exam-Prep", 
         "description": "Stationery and budget electronics focus, late-night engagement, exam window boost",
-        "preferred_categories": ["stationery", "electronics_budget", "books"],
+        "preferred_categories": ["books", "stationery", "electronics"],
         "peak_hours": [22, 23, 0, 1],
         "region_focus": "college_towns",
         "seasonal_boost": ["Board Exams", "Competitive Exams"]
@@ -79,31 +95,32 @@ PERSONAS = [
     {
         "id": "budget_gadget",
         "name": "Budget Gadget Seeker",
-        "description": "Low-cost electronics, weekend timing, festival deal sensitivity",
-        "preferred_categories": ["electronics_accessories", "gadgets_budget", "mobile_accessories"],
+        "description": "Low-cost electronics, weekend timing, festival deal sensitivity", 
+        "preferred_categories": ["electronics", "gadgets", "mobile", "accessories"],
         "peak_hours": [18, 19, 20, 21],
-        "region_focus": "urban_suburban",
+        "region_focus": "urban_suburban", 
         "seasonal_boost": ["Diwali Sale", "Republic Day Sale"]
     },
     {
         "id": "home_decor_festive",
         "name": "Home Decor Festive Upgrader",
         "description": "Decor and lighting before Diwali, afternoon engagement pattern",
-        "preferred_categories": ["home_decor", "lighting", "furnishing"],
+        "preferred_categories": ["accessories", "jewelry", "puja_items"],
         "peak_hours": [14, 15, 16, 17],
         "region_focus": "metro_suburban",
         "seasonal_boost": ["Pre-Diwali", "Gudi Padwa", "House Warming"]
     },
     {
-        "id": "regional_festive",
+        "id": "regional_festive", 
         "name": "Regional Festive Wear (Bengal Focus)",
         "description": "Sarees and puja items during Durga Puja, morning browsing pattern",
-        "preferred_categories": ["saree", "ethnic_bengali", "puja_items"],
+        "preferred_categories": ["fashion", "ethnic", "saree"],
         "peak_hours": [7, 8, 9, 10],
         "region_focus": "west_bengal",
         "seasonal_boost": ["Durga Puja", "Kali Puja", "Poila Boishakh"]
     }
 ]
+
 
 # Request/Response models
 class DataGenerationRequest(BaseModel):
@@ -135,6 +152,31 @@ def ensure_data_dir():
 def get_persona_by_id(persona_id: str) -> Optional[Dict]:
     return next((p for p in PERSONAS if p["id"] == persona_id), None)
 
+def filter_products_by_persona(df_products: pd.DataFrame, persona: Dict) -> pd.DataFrame:
+    """Filter products based on persona preferences with flexible matching"""
+    if df_products.empty:
+        raise HTTPException(status_code=500, detail="No product data available. Generate data first.")
+
+    print(f"Loaded {len(df_products)} products, {len(df_events)} events") 
+    
+    persona_categories = [cat.lower() for cat in persona["preferred_categories"]]
+    
+    # Try exact category matches first
+    exact_matches = df_products[
+        df_products["category"].str.lower().isin(persona_categories)
+    ]
+    
+    if not exact_matches.empty:
+        return exact_matches
+    
+    # Try partial matches in category or title
+    partial_matches = df_products[
+        df_products["category"].str.lower().str.contains("|".join(persona_categories), na=False) |
+        df_products["title"].str.lower().str.contains("|".join(persona_categories), na=False)
+    ]
+    
+    return partial_matches if not partial_matches.empty else df_products.head(10)
+
 #test
 @app.post("/api/debug-generate")
 async def debug_generate():
@@ -164,8 +206,6 @@ async def debug_generate():
             "type": type(e).__name__,
             "traceback": traceback.format_exc()
         }
-
-
 
 # ---------- SPA entry (serve index.html at "/") ----------
 @app.get("/", include_in_schema=False)
@@ -293,6 +333,14 @@ async def generate_recommendations(request: RecommendationRequest) -> Recommenda
     if not persona:
         raise HTTPException(status_code=400, detail=f"Invalid persona_id: {request.persona_id}")
     
+     # ADD FIX 4 HERE - Debug logging
+    print(f"Available models: {list(models.keys())}")
+    print(f"Headlines model: {models['headlines']}")
+    print(f"Headlines model trained: {models['headlines'].trained if models['headlines'] else 'None'}")
+    print(f"Covisitation model: {models['covisitation']}")
+    print(f"STO model: {models['sto']}")
+    print(f"Reranker model: {models['reranker']}")
+
     try:
         df_events = pd.read_csv("data/events.csv") if os.path.exists("data/events.csv") else pd.DataFrame()
         df_products = pd.read_csv("data/products.csv") if os.path.exists("data/products.csv") else pd.DataFrame()
@@ -305,23 +353,110 @@ async def generate_recommendations(request: RecommendationRequest) -> Recommenda
             except Exception:
                 optimal_hours = persona["peak_hours"][:3]
 
+        # FIXED PRODUCT FILTERING LOGIC
         products = []
-        if models["covisitation"] and not df_products.empty:
-            try:
-                products = await models["covisitation"].get_recommendations(
-                    persona["preferred_categories"], df_products, limit=10
-                )
-            except Exception:
-                products = df_products[df_products["category"].isin(persona["preferred_categories"])].head(10).to_dict("records")
-        elif not df_products.empty:
-            products = df_products[df_products["category"].isin(persona["preferred_categories"])].head(10).to_dict("records")
+        if not df_products.empty:
+            # Map persona categories to actual data categories
+            category_mappings = {
+                # Budget Gadget mappings (fix the products issue)
+                "electronics": ["electronics_budget", "electronics_accessories"],
+                "gadgets": ["gadgets_budget"], 
+                "mobile": ["mobile_accessories"],
+                "accessories": ["accessories", "mobile_accessories", "electronics_accessories"],
+                
+                # Home Decor mappings (fix the HTTP error)
+                "homedecor": ["homedecor"],
+                "decor": ["homedecor"], 
+                "lighting": ["lighting"],
+                "furnishing": ["furnishing"],
+                
+                # Other mappings
+                "fashion": ["fashion_ethnic", "designer_wear"],
+                "ethnic": ["fashion_ethnic", "ethnic_bengali"],
+                "stationery": ["stationery"],
+                "books": ["books"],
+                "jewelry": ["jewelry"]
+            }
 
-        headline = "🎯 Special Picks Just for You! 🎯"
+
+            
+            # Build list of actual categories to search for
+            search_categories = []
+            for pref_cat in persona["preferred_categories"]:
+                if pref_cat in category_mappings:
+                    mapping = category_mappings[pref_cat]
+                    if isinstance(mapping, list):
+                        search_categories.extend(mapping)
+                    else:
+                        search_categories.append(mapping)
+                else:
+                    search_categories.append(pref_cat)
+            
+            # Filter products by mapped categories
+            filtered_products = df_products[
+                df_products["category"].isin(search_categories)
+            ]
+
+            #logging
+            print(f"Persona categories: {persona['preferred_categories']}")
+            print(f"Search categories: {search_categories}")  
+            print(f"Filtered products count: {len(filtered_products)}")
+            print(f"Available categories in data: {df_products['category'].unique()}")
+            print(f"First few filtered products: {filtered_products.head()['category'].tolist()}")
+            
+            # If no exact matches, try partial matches
+            if filtered_products.empty:
+                mask = df_products["category"].str.contains(
+                    "|".join(search_categories), case=False, na=False
+                )
+                filtered_products = df_products[mask]
+            
+            # If still empty, try title matching
+            if filtered_products.empty:
+                mask = df_products["title"].str.contains(
+                    "|".join(persona["preferred_categories"]), case=False, na=False
+                )
+                filtered_products = df_products[mask]
+            
+            # Use ML model if available, otherwise random sample
+            if models["covisitation"] and hasattr(models["covisitation"], 'trained') and models["covisitation"].trained and not filtered_products.empty:
+                try:
+                    products = await models["covisitation"].get_recommendations(
+                        persona["preferred_categories"], filtered_products, limit=6
+                    )
+                except Exception:
+                    # Trained model failed, fallback to sampling
+                    if len(filtered_products) >= 6:
+                        products = filtered_products.sample(n=6, random_state=42).to_dict("records")
+                    else:
+                        products = filtered_products.to_dict("records")
+            elif not filtered_products.empty:
+                # No trained model available, use category filtering + sampling
+                if len(filtered_products) >= 6:
+                    products = filtered_products.sample(n=6, random_state=42).to_dict("records") 
+                else:
+                    products = filtered_products.to_dict("records")
+
+
+        
+        # Ensure we have exactly 6 products for frontend
+        if len(products) < 6 and not df_products.empty:
+            remaining = 6 - len(products)
+            used_ids = [p.get('productid', p.get('product_id', 0)) for p in products]
+            extra_products = df_products[~df_products['productid'].isin(used_ids)].sample(n=min(remaining, len(df_products) - len(used_ids))).to_dict("records")
+            products.extend(extra_products)
+        
+        products = products[:6]  # Ensure exactly 6
+
+        headline = "🌟 Special Picks: Just for You! 🌟"
         if models["headlines"]:
             try:
                 headline = await models["headlines"].generate_headline(persona, df_calendar)
-            except Exception:
-                pass
+                print(f"Generated headline: {headline}")  # Add logging
+            except Exception as e:
+                print(f"Headline generation failed: {e}")  # Log the actual error
+                import traceback
+                traceback.print_exc()
 
         product_list = "\\n".join([
             f"• {p.get('title', 'Product')} - ₹{int(p.get('price', 0))}"
@@ -345,6 +480,7 @@ Happy selling! 🛍️"""
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Recommendation generation failed: {str(e)}")
+
 
 # ---------- Static assets mount under /static ----------
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
