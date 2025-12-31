@@ -1,7 +1,7 @@
 # Meesho Micro-Moment Prediction Engine
 
 ## Demo Link
-[https://drive.google.com/file/d/1-atFlcVSpobays6buo0IXeOJA9aQmuBv/view?usp=drive_link] (https://drive.google.com/file/d/1-atFlcVSpobays6buo0IXeOJA9aQmuBv/view?usp=drive_link)
+https://drive.google.com/file/d/1-atFlcVSpobays6buo0IXeOJA9aQmuBv/view?usp=drive_link
 
 # Installation & Setup:
 
